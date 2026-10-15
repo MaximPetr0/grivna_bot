@@ -1,8 +1,9 @@
 import os
-from datetime import date
+
 from html import escape
 import telebot
 from dotenv import load_dotenv
+from clock import now_kyiv
 from services import parse_message, add_expense, get_day, get_month, make_report, delete_last, make_category_report, \
     parse_month
 
@@ -29,7 +30,7 @@ def skolko(message):
         return
 
     category = args
-    t = date.today()
+    t = now_kyiv().date()
     year, month_num = t.year, t.month
 
     parts = args.rsplit(" ", 1)
@@ -60,14 +61,14 @@ def start(message):
 @bot.message_handler(commands=['today'])
 @bot.message_handler(func=lambda m: m.text == BTN_TODAY)
 def today(message):
-    expenses = get_day(message.chat.id, date.today())
+    expenses = get_day(message.chat.id, now_kyiv().date())
     bot.reply_to(message, "<b>📅 Сегодня</b>\n\n" + make_report(expenses), parse_mode="HTML")
 
 
 @bot.message_handler(commands=['month'])
 @bot.message_handler(func=lambda m: m.text == BTN_MONTH)
 def month(message):
-    t = date.today()
+    t = now_kyiv().date()
     expenses = get_month(message.chat.id, t.year, t.month)
     bot.reply_to(message, "<b>🗓 Этот месяц</b>\n\n" + make_report(expenses), parse_mode="HTML")
 
